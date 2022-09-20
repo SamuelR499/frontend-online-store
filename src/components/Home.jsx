@@ -96,34 +96,37 @@ export default class Home extends Component {
       productList,
       notFound,
       filterCategory,
-      quantidade } = this.state;
+      quantidade,
+    } = this.state;
     return (
       <div>
-        <nav>
+        <nav className="home-nave">
+          <div>
+            <input
+              type="text"
+              name="inputName"
+              value={ inputName }
+              data-testid="query-input"
+              onChange={ this.handleOnChange }
+            />
+            <button
+              type="button"
+              data-testid="query-button"
+              onClick={ this.handleInputClick }
+            >
+              Pesquisar
+            </button>
+          </div>
           <Link to="/shopping-cart">
             <button
               data-testid="shopping-cart-button"
               type="button"
             >
               Carrinho
-              <p data-testid="shopping-cart-size">{ quantidade }</p>
+              <p data-testid="shopping-cart-size">{quantidade}</p>
             </button>
           </Link>
         </nav>
-        <input
-          type="text"
-          name="inputName"
-          value={ inputName }
-          data-testid="query-input"
-          onChange={ this.handleOnChange }
-        />
-        <button
-          type="button"
-          data-testid="query-button"
-          onClick={ this.handleInputClick }
-        >
-          Pesquisar
-        </button>
         <div onChange={ this.handleRadio }>
           <ul>
             {categorieList.map((categorie) => (
@@ -145,11 +148,22 @@ export default class Home extends Component {
             ))}
           </ul>
         </div>
-        <p data-testid="home-initial-message">
-          Digite algum termo de pesquisa ou escolha uma categoria.
-        </p>
 
-        {productList.length > 0 ? (
+        {productList.length > 0 || filterCategory.length > 0 ? (
+          null
+        )
+          : (
+            <div>
+              <p
+                data-testid="home-initial-message"
+              >
+                Digite algum termo de pesquisa ou escolha uma categoria.
+              </p>
+              <p>{notFound}</p>
+            </div>
+          )}
+
+        {productList.length > 0 && (
           productList.map((item) => (
             <div key={ item.id } data-testid="product">
               <h3>{item.title}</h3>
@@ -171,18 +185,16 @@ export default class Home extends Component {
               </button>
             </div>
           ))
-        ) : (
-          <p>{notFound}</p>
         )}
 
-        {filterCategory.length > 0 ? (
+        {filterCategory.length > 0 && (
           filterCategory.map((item) => (
             <div key={ item.id } data-testid="product">
               <h3>{item.title}</h3>
               <img src={ item.thumbnail } alt={ item.id } width="200" />
               <p>{item.price}</p>
               {item.shipping.free_shipping
-              && <p data-testid="free-shipping">Frete Grátis</p>}
+                && <p data-testid="free-shipping">Frete Grátis</p>}
 
               <Link
                 to={ `/product/${item.id}` }
@@ -200,8 +212,6 @@ export default class Home extends Component {
               </button>
             </div>
           ))
-        ) : (
-          <p>{notFound}</p>
         )}
       </div>
     );
